@@ -25,7 +25,7 @@ def make_inputs(case: dict, rng: np.random.Generator):
 
 
 def reference_impl(Q: np.ndarray, cos: np.ndarray, sin: np.ndarray) -> np.ndarray:
-    M, D = Q.shape
+    _, D = Q.shape
     half = D // 2
     x1 = Q[:, :half]
     x2 = Q[:, half:]
