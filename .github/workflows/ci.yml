@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    name: Build & Test (macOS Apple Silicon)
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          brew install ninja clang-format
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy ruff
+
+      - name: Lint Python (Ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Lint C++ & MSL (clang-format)
+        run: |
+          clang-format --dry-run --Werror src/*.cpp src/*.hpp shaders/*.metal
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build C++ Harness
+        run: |
+          ninja -C build
+
+      - name: Run Tests & Benchmarks
+        run: |
+          # Check whether Metal Device is available on this runner
+          HAS_METAL=$(python3 -c "import ctypes; f = ctypes.cdll.LoadLibrary('/System/Library/Frameworks/Metal.framework/Metal'); f.MTLCreateSystemDefaultDevice.restype = ctypes.c_void_p; f.MTLCopyAllDevices.restype = ctypes.c_void_p; print(bool(f.MTLCreateSystemDefaultDevice() or f.MTLCopyAllDevices()))")
+          echo "Metal GPU available: $HAS_METAL"
+
+          if [ "$HAS_METAL" = "True" ]; then
+            python3 -m unittest discover -s tests -p "test_*.py" -v
+            python3 scripts/bench.py 001_vector_add
+            # Run matrix multiplication with smaller warmup/runs for CI efficiency
+            python3 scripts/bench.py 002_matrix_mul --warmup 1 --runs 3
+          else
+            echo "::warning ::Metal GPU is not available in this virtualized environment. Running non-GPU unit tests only."
+            python3 -m unittest tests.test_runner.RunnerTests.test_page_padding_at_allocation_boundaries
+            python3 -m unittest tests.test_runner.RunnerTests.test_empty_float_output_requires_matching_shape_and_dtype
+            python3 -m unittest tests.test_runner.RunnerTests.test_cli_invalid_counts
+          fi
