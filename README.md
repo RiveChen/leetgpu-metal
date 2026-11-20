@@ -139,6 +139,10 @@ clang-format --dry-run --Werror src/*.cpp src/*.hpp shaders/*.metal
 
 ---
 
+## Acknowledgments
+
+Thanks to [LeetGPU](https://leetgpu.com/) for inspiring this project’s approach to learning GPU programming through kernel exercises.
+
 ## License
 
 This project and Apple's `metal-cpp` submodule are licensed under the Apache License 2.0. See [LICENSE](LICENSE) and [metal-cpp LICENSE](third_party/metal-cpp/LICENSE.txt).

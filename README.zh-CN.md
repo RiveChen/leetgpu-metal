@@ -87,6 +87,10 @@ python3 scripts/bench.py 002_matrix_mul
 python3 -m unittest discover -s tests -v
 ```
 
+## 致谢
+
+感谢 [LeetGPU](https://leetgpu.com/) 为本项目提供灵感，让我们把通过编写内核练习 GPU 编程的方式带到 Metal 上。
+
 ## 许可证
 
 本项目和 Apple 的 metal-cpp 子模块均采用 Apache License 2.0。[项目许可证](LICENSE) · [metal-cpp 许可证](third_party/metal-cpp/LICENSE.txt)
