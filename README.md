@@ -48,8 +48,23 @@ python3 scripts/bench.py 001_vector_add --shader my_vector_add.metal
 
 | Problem | Description | Metric |
 | --- | --- | --- |
-| [001_vector_add](problems/001_vector_add.py) · [Metal Kernel](shaders/001_vector_add.metal) | FP32 element-wise addition across sizes 31, 100,003, and 16,777,216 | Effective bandwidth in GB/s (2 reads + 1 write per element) |
+| [001_vector_add](problems/001_vector_add.py) · [Metal Kernel](shaders/001_vector_add.metal) | FP32 element-wise addition across sizes 31, 100,003, and 16,777,216 | Effective bandwidth in GB/s |
 | [002_matrix_mul](problems/002_matrix_mul.py) · [Metal Kernel](shaders/002_matrix_mul.metal) | FP32 general matrix multiplication up to 4096 × 4096 square matrices | Throughput in GFLOP/s (`2 × M × N × K`) |
+| [003_matrix_transpose](problems/003_matrix_transpose.py) · [Metal Kernel](shaders/003_matrix_transpose.metal) | 2D matrix transpose testing memory coalescing and threadgroup tiling | Effective bandwidth in GB/s |
+| [004_reduction](problems/004_reduction.py) · [Metal Kernel](shaders/004_reduction.metal) | Parallel array summation using SIMD shuffle and threadgroup reduction | Effective bandwidth in GB/s |
+| [005_softmax](problems/005_softmax.py) · [Metal Kernel](shaders/005_softmax.metal) | Numerically stable online / multi-pass Softmax with large-offset tests | Effective bandwidth in GB/s |
+| [008_matrix_addition](problems/008_matrix_addition.py) · [Metal Kernel](shaders/008_matrix_addition.metal) | 2D element-wise matrix addition with 2D grid dispatch | Effective bandwidth in GB/s |
+| [010_2d_convolution](problems/010_2d_convolution.py) · [Metal Kernel](shaders/010_2d_convolution.metal) | 2D valid cross-correlation / convolution with window sliding | Throughput in GFLOP/s |
+| [013_histogramming](problems/013_histogramming.py) · [Metal Kernel](shaders/013_histogramming.metal) | Histogram binning with hardware atomic additions | Effective bandwidth in GB/s |
+| [016_prefix_sum](problems/016_prefix_sum.py) · [Metal Kernel](shaders/016_prefix_sum.metal) | Inclusive scan prefix sum testing intra-warp and inter-threadgroup scan | Effective bandwidth in GB/s |
+| [017_dot_product](problems/017_dot_product.py) · [Metal Kernel](shaders/017_dot_product.metal) | Vector inner product using FMA instructions and collective reduction | Effective bandwidth in GB/s |
+| [021_relu](problems/021_relu.py) · [Metal Kernel](shaders/021_relu.metal) | Element-wise ReLU activation testing peak memory bandwidth throughput | Effective bandwidth in GB/s |
+| [027_mean_squared_error](problems/027_mean_squared_error.py) · [Metal Kernel](shaders/027_mean_squared_error.metal) | Mean squared error (MSE) loss computation between prediction and target | Effective bandwidth in GB/s |
+| [042_2d_max_pooling](problems/042_2d_max_pooling.py) · [Metal Kernel](shaders/042_2d_max_pooling.metal) | 2D 2x2 max pooling with stride 2 for spatial downsampling | Effective bandwidth in GB/s |
+| [050_rms_normalization](problems/050_rms_normalization.py) · [Metal Kernel](shaders/050_rms_normalization.metal) | Root Mean Square Normalization layer widely used in modern LLMs | Effective bandwidth in GB/s |
+| [052_silu](problems/052_silu.py) · [Metal Kernel](shaders/052_silu.metal) | SiLU (Swish) activation function ($x \cdot \sigma(x)$) for modern LLMs | Effective bandwidth in GB/s |
+| [061_rope_embedding](problems/061_rope_embedding.py) · [Metal Kernel](shaders/061_rope_embedding.metal) | Rotary Positional Embedding (RoPE) used in LLaMA, Mistral, and Qwen | Effective bandwidth in GB/s |
+| [113_layer_normalization](problems/113_layer_normalization.py) · [Metal Kernel](shaders/113_layer_normalization.metal) | Layer Normalization (mean, variance, affine scaling) for Transformers | Effective bandwidth in GB/s |
 
 ```sh
 python3 scripts/bench.py 002_matrix_mul
