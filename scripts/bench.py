@@ -128,7 +128,7 @@ def check_page_padding(mm: mmap.mmap, payload_nbytes: int) -> tuple[bool, str]:
     expected_pad = PADDING_CANARY_BYTE * pad_len
     if actual_pad != expected_pad:
         # locate the byte offset of the first byte that was out-of-bounds modified
-        for offset, (a, e) in enumerate(zip(actual_pad, expected_pad)):
+        for offset, (a, e) in enumerate(zip(actual_pad, expected_pad, strict=True)):
             if a != e:
                 return False, (
                     f"Page padding overwritten at byte offset +{offset} past buffer end "
@@ -340,7 +340,7 @@ def run_single_case(
     atol = getattr(mod, "ATOL", 1e-3)
 
     diag_msgs = []
-    for i, (out_arr, ref_arr) in enumerate(zip(aligned_outputs, refs)):
+    for i, (out_arr, ref_arr) in enumerate(zip(aligned_outputs, refs, strict=True)):
         ok, msg = verify_output(out_arr, np.asarray(ref_arr), rtol=rtol, atol=atol)
         if not ok:
             tag = f"out[{i}] " if not single_output else ""

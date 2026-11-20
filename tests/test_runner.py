@@ -87,7 +87,7 @@ class RunnerTests(unittest.TestCase):
         ):
             problem = SimpleNamespace(
                 DTYPE=values.dtype,
-                make_inputs=lambda count, rng: ([values], values.shape, [np.uint32(count)]),
+                make_inputs=lambda count, rng, v=values: ([v], v.shape, [np.uint32(count)]),
                 reference_impl=lambda src: src,
                 dispatch_config=lambda case: (1, 1, 1, 2, 1, 1),
             )
@@ -134,6 +134,7 @@ class RunnerTests(unittest.TestCase):
                     [sys.executable, str(ROOT / "scripts/bench.py"), "unused", flag, value],
                     capture_output=True,
                     text=True,
+                    check=False,
                 )
                 self.assertEqual(result.returncode, 2, result.stderr)
                 self.assertIn(f"error: {flag}", result.stderr)
