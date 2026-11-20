@@ -1,0 +1,26 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 100
+PointerAlignment: Left
+ReferenceAlignment: Left
+AlignAfterOpenBracket: BlockIndent
+BinPackParameters: false
+BreakBeforeBraces: Attach
+InsertNewlineAtEOF: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+InsertBraces: false
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 0
+NamespaceIndentation: None
+SortIncludes: Never
+ReflowComments: false
+BreakStringLiterals: false
+BinPackArguments: true
+QualifierAlignment: Leave

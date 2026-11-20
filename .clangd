@@ -1,0 +1,6 @@
+If:
+  PathMatch: .*\.metal
+Diagnostics:
+  Suppress: "*"
+Index:
+  Background: Skip
