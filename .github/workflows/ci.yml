@@ -9,7 +9,7 @@ on:
 jobs:
   lint-and-build:
     name: Build & Test (macOS Apple Silicon)
-    runs-on: macos-14
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
