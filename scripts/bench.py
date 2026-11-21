@@ -74,6 +74,13 @@ def load_harness_lib(lib_path: Path):
         ctypes.c_bool,
     ]
     lib.run_metal_kernel.restype = RunResult
+    if hasattr(lib, "run_metal_kernel_inplace"):
+        lib.run_metal_kernel_inplace.argtypes = [
+            *lib.run_metal_kernel.argtypes,
+            ctypes.c_void_p,
+            ctypes.c_size_t,
+        ]
+        lib.run_metal_kernel_inplace.restype = RunResult
     return lib
 
 
@@ -223,6 +230,15 @@ def run_single_case(
         out_specs = list(out_spec)
         single_output = False
 
+    in_place = getattr(mod, "IN_PLACE", False)
+    if in_place and not hasattr(lib, "run_metal_kernel_inplace"):
+        return (
+            False,
+            "In-place execution requires an updated library. Run cmake --build build.",
+            None,
+        )
+    if in_place and (len(inputs) != 1 or not single_output):
+        raise ValueError("IN_PLACE requires one input and one output of the same shape and dtype")
     keep_alive_mmaps = []
     buffer_descs = []
     all_buffer_guards = []  # 记录 (label, mm, payload_nbytes) 用于执行后统一审计
@@ -242,10 +258,14 @@ def run_single_case(
         snapshot = input_bytes.copy()
         snapshot.flags.writeable = False
         readonly_inputs.append(snapshot.view(arr.dtype).reshape(arr.shape))
-        input_snapshots.append((input_bytes, snapshot))
+        if not in_place:
+            input_snapshots.append((input_bytes, snapshot))
+        else:
+            inplace_array = arr
 
     # 2. must compute true values based on pure inputs before GPU execution to prevent UMA shared memory from being mutated by the Kernel
-    raw_refs = mod.reference_impl(*readonly_inputs)
+    reference_scalars = scalars if getattr(mod, "REFERENCE_USES_SCALARS", False) else ()
+    raw_refs = mod.reference_impl(*readonly_inputs, *reference_scalars)
     if single_output:
         refs = [raw_refs]
     else:
@@ -262,6 +282,11 @@ def run_single_case(
     # bind output Buffers (initialized with sentinel values)
     aligned_outputs = []
     for i, (shape, dtype) in enumerate(out_specs):
+        if in_place:
+            if inplace_array.shape != shape or inplace_array.dtype != dtype:
+                raise ValueError("In-place output must match the input buffer")
+            aligned_outputs.append(inplace_array)
+            continue
         arr, mm, payload_nbytes = alloc_page_aligned(shape, dtype)
         ref = np.asarray(refs[i])
         if error := output_spec_error(arr, ref):
@@ -309,7 +334,9 @@ def run_single_case(
     c_bufs = (BufferDesc * len(buffer_descs))(*buffer_descs)
     c_bytes = (BytesDesc * len(bytes_descs))(*bytes_descs) if bytes_descs else None
 
-    res = lib.run_metal_kernel(
+    run_kernel = lib.run_metal_kernel_inplace if in_place else lib.run_metal_kernel
+    reset_args = (readonly_inputs[0].ctypes.data, readonly_inputs[0].nbytes) if in_place else ()
+    res = run_kernel(
         msl_bytes,
         entry_name,
         c_bufs,
@@ -321,6 +348,7 @@ def run_single_case(
         runs,
         flush_l2,
         fast_math,
+        *reset_args,
     )
 
     if res.status != 0:

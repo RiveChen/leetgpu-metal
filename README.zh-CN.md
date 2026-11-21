@@ -42,28 +42,51 @@ uv run scripts/bench.py 001_vector_add
 
 ## 内置题目
 
+### Easy
+
+题号和英文标题对应[上游 Easy 目录](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy)。本地使用独立编写的 Metal 实现和测试数据。
+
+| 上游题目 | 题目 | 计算内容 | 性能指标 |
+| --- | --- | --- | --- |
+| [1. Vector Addition](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/1_vector_add) | [001_vector_add](problems/001_vector_add.py) · [练习模板](shaders/starters/001_vector_add.metal) · [参考实现](shaders/solutions/001_vector_add.metal) | FP32 向量逐元素相加，长度分别为 31、100,003 和 16,777,216 | 有效带宽 GB/s，每个元素按两次读、一次写计算 |
+| [2. Matrix Multiplication](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/2_matrix_multiplication) | [002_matrix_multiplication](problems/002_matrix_multiplication.py) · [练习模板](shaders/starters/002_matrix_multiplication.metal) · [参考实现](shaders/solutions/002_matrix_multiplication.metal) | FP32 矩阵乘法，覆盖非方阵及最大 4096 × 4096 的方阵 | 吞吐量 GFLOP/s，运算量按 `2 × M × N × K` 计算 |
+| [3. Matrix Transpose](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/3_matrix_transpose) | [003_matrix_transpose](problems/003_matrix_transpose.py) · [练习模板](shaders/starters/003_matrix_transpose.metal) · [参考实现](shaders/solutions/003_matrix_transpose.metal) | 二维矩阵转置，测试访存合并与线程组分块优化 | 有效带宽 GB/s |
+| [7. Color Inversion](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/7_color_inversion) | [007_color_inversion](problems/007_color_inversion.py) · [练习模板](shaders/starters/007_color_inversion.metal) · [参考实现](shaders/solutions/007_color_inversion.metal) | 原地反转 RGBA 图像中的 RGB，保留透明度 | GPU ms |
+| [8. Matrix Addition](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/8_matrix_addition) | [008_matrix_addition](problems/008_matrix_addition.py) · [练习模板](shaders/starters/008_matrix_addition.metal) · [参考实现](shaders/solutions/008_matrix_addition.metal) | 二维矩阵逐元素加法，测试二维线程网格分发 | 有效带宽 GB/s |
+| [9. 1D Convolution](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/9_1d_convolution) | [009_1d_convolution](problems/009_1d_convolution.py) · [练习模板](shaders/starters/009_1d_convolution.metal) · [参考实现](shaders/solutions/009_1d_convolution.metal) | 一维有效互相关 | GPU ms |
+| [19. Reverse Array](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/19_reverse_array) | [019_reverse_array](problems/019_reverse_array.py) · [练习模板](shaders/starters/019_reverse_array.metal) · [参考实现](shaders/solutions/019_reverse_array.metal) | 原地反转 FP32 数组 | GPU ms |
+| [21. ReLU](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/21_relu) | [021_relu](problems/021_relu.py) · [练习模板](shaders/starters/021_relu.metal) · [参考实现](shaders/solutions/021_relu.metal) | 逐元素单目 ReLU 激活函数，测试硬件显存带宽极限 | 有效带宽 GB/s |
+| [23. Leaky ReLU](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/23_leaky_relu) | [023_leaky_relu](problems/023_leaky_relu.py) · [练习模板](shaders/starters/023_leaky_relu.metal) · [参考实现](shaders/solutions/023_leaky_relu.metal) | 对负输入使用 0.01 的斜率 | GPU ms |
+| [24. Rainbow Table](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/24_rainbow_table) | [024_rainbow_table](problems/024_rainbow_table.py) · [练习模板](shaders/starters/024_rainbow_table.metal) · [参考实现](shaders/solutions/024_rainbow_table.metal) | 对四字节整数迭代计算 32 位 FNV-1a | GPU ms |
+| [31. Matrix Copy](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/31_matrix_copy) | [031_matrix_copy](problems/031_matrix_copy.py) · [练习模板](shaders/starters/031_matrix_copy.metal) · [参考实现](shaders/solutions/031_matrix_copy.metal) | 复制 FP32 方阵 | GPU ms |
+| [41. Simple Inference](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/41_simple_inference) | [041_simple_inference](problems/041_simple_inference.py) · [练习模板](shaders/starters/041_simple_inference.metal) · [参考实现](shaders/solutions/041_simple_inference.metal) | 批量线性层推理，以权重和偏置数组表示模型，无偏置时传零向量 | GPU ms |
+| [52. Sigmoid Linear Unit](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/52_silu) | [052_silu](problems/052_silu.py) · [练习模板](shaders/starters/052_silu.metal) · [参考实现](shaders/solutions/052_silu.metal) | 现代 LLM 与扩散模型核心 SiLU (Swish) 激活函数 | 有效带宽 GB/s |
+| [54. Swish-Gated Linear Unit](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/54_swiglu) | [054_swiglu](problems/054_swiglu.py) · [练习模板](shaders/starters/054_swiglu.metal) · [参考实现](shaders/solutions/054_swiglu.metal) | 前半向量经 SiLU 激活后与后半向量相乘 | GPU ms |
+| [62. Value Clipping](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/62_value_clipping) | [062_value_clipping](problems/062_value_clipping.py) · [练习模板](shaders/starters/062_value_clipping.metal) · [参考实现](shaders/solutions/062_value_clipping.metal) | 将元素截断到用例指定的上下界 | GPU ms |
+| [63. Interleave Arrays](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/63_interleave) | [063_interleave](problems/063_interleave.py) · [练习模板](shaders/starters/063_interleave.metal) · [参考实现](shaders/solutions/063_interleave.metal) | 交替排列两个 FP32 数组中的元素 | GPU ms |
+| [65. Gaussian Error Gated Linear Unit](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/65_geglu) | [065_geglu](problems/065_geglu.py) · [练习模板](shaders/starters/065_geglu.metal) · [参考实现](shaders/solutions/065_geglu.metal) | 用后半向量的 GELU 值对前半向量逐元素加权 | GPU ms |
+| [66. RGB to Grayscale](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/66_rgb_to_grayscale) | [066_rgb_to_grayscale](problems/066_rgb_to_grayscale.py) · [练习模板](shaders/starters/066_rgb_to_grayscale.metal) · [参考实现](shaders/solutions/066_rgb_to_grayscale.metal) | 将连续存放的 RGB 像素转成灰度 | GPU ms |
+| [68. Sigmoid Activation](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/68_sigmoid) | [068_sigmoid](problems/068_sigmoid.py) · [练习模板](shaders/starters/068_sigmoid.metal) · [参考实现](shaders/solutions/068_sigmoid.metal) | 逐元素计算 sigmoid | GPU ms |
+| [124. GELU Activation](https://github.com/AlphaGPU/leetgpu-challenges/tree/3b2ec31a1e088d6b8ed81962fbfd85bb92151b63/challenges/easy/124_gelu) | [124_gelu](problems/124_gelu.py) · [练习模板](shaders/starters/124_gelu.metal) · [参考实现](shaders/solutions/124_gelu.metal) | 用正态分布累积分布函数计算 GELU | GPU ms |
+
+### 其他已收录题目
+
 | 题目 | 计算内容 | 性能指标 |
 | --- | --- | --- |
-| [001_vector_add](problems/001_vector_add.py) · [练习模板](shaders/starters/001_vector_add.metal) · [参考实现](shaders/solutions/001_vector_add.metal) | FP32 向量逐元素相加，长度分别为 31、100,003 和 16,777,216 | 有效带宽 GB/s，每个元素按两次读、一次写计算 |
-| [002_matrix_mul](problems/002_matrix_mul.py) · [练习模板](shaders/starters/002_matrix_mul.metal) · [参考实现](shaders/solutions/002_matrix_mul.metal) | FP32 矩阵乘法，覆盖非方阵及最大 4096 × 4096 的方阵 | 吞吐量 GFLOP/s，运算量按 `2 × M × N × K` 计算 |
-| [003_matrix_transpose](problems/003_matrix_transpose.py) · [练习模板](shaders/starters/003_matrix_transpose.metal) · [参考实现](shaders/solutions/003_matrix_transpose.metal) | 二维矩阵转置，测试访存合并与线程组分块优化 | 有效带宽 GB/s |
 | [004_reduction](problems/004_reduction.py) · [练习模板](shaders/starters/004_reduction.metal) · [参考实现](shaders/solutions/004_reduction.metal) | 并行数组规约求和，测试 SIMD-group 原语与多级规约 | 有效带宽 GB/s |
 | [005_softmax](problems/005_softmax.py) · [练习模板](shaders/starters/005_softmax.metal) · [参考实现](shaders/solutions/005_softmax.metal) | 数值稳定的 Softmax 算子，包含大偏移量防溢出测试 | 有效带宽 GB/s |
-| [008_matrix_addition](problems/008_matrix_addition.py) · [练习模板](shaders/starters/008_matrix_addition.metal) · [参考实现](shaders/solutions/008_matrix_addition.metal) | 二维矩阵逐元素加法，测试二维线程网格分发 | 有效带宽 GB/s |
 | [010_2d_convolution](problems/010_2d_convolution.py) · [练习模板](shaders/starters/010_2d_convolution.metal) · [参考实现](shaders/solutions/010_2d_convolution.metal) | 二维有效卷积 / 互相关运算，测试卷积核滑窗与共享内存复用 | 吞吐量 GFLOP/s |
 | [013_histogramming](problems/013_histogramming.py) · [练习模板](shaders/starters/013_histogramming.metal) · [参考实现](shaders/solutions/013_histogramming.metal) | 直方图统计，测试硬件原子加法 `atomic_fetch_add` 与争用优化 | 有效带宽 GB/s |
 | [016_prefix_sum](problems/016_prefix_sum.py) · [练习模板](shaders/starters/016_prefix_sum.metal) · [参考实现](shaders/solutions/016_prefix_sum.metal) | 前缀和扫描（Inclusive Scan），测试 SIMD 组内与多级规约扫描 | 有效带宽 GB/s |
 | [017_dot_product](problems/017_dot_product.py) · [练习模板](shaders/starters/017_dot_product.metal) · [参考实现](shaders/solutions/017_dot_product.metal) | 向量内积点积，测试 FMA 指令与两级树状累加规约 | 有效带宽 GB/s |
-| [021_relu](problems/021_relu.py) · [练习模板](shaders/starters/021_relu.metal) · [参考实现](shaders/solutions/021_relu.metal) | 逐元素单目 ReLU 激活函数，测试硬件显存带宽极限 | 有效带宽 GB/s |
 | [027_mean_squared_error](problems/027_mean_squared_error.py) · [练习模板](shaders/starters/027_mean_squared_error.metal) · [参考实现](shaders/solutions/027_mean_squared_error.metal) | 均方误差损失（MSE Loss）计算，测试差值平方规约 | 有效带宽 GB/s |
 | [042_2d_max_pooling](problems/042_2d_max_pooling.py) · [练习模板](shaders/starters/042_2d_max_pooling.metal) · [参考实现](shaders/solutions/042_2d_max_pooling.metal) | 二维 2x2 步长 2 最大池化，CNN 特征图经典降采样 | 有效带宽 GB/s |
 | [050_rms_normalization](problems/050_rms_normalization.py) · [练习模板](shaders/starters/050_rms_normalization.metal) · [参考实现](shaders/solutions/050_rms_normalization.metal) | 现代大语言模型（LLM）常用的 RMSNorm 归一化层 | 有效带宽 GB/s |
-| [052_silu](problems/052_silu.py) · [练习模板](shaders/starters/052_silu.metal) · [参考实现](shaders/solutions/052_silu.metal) | 现代 LLM 与扩散模型核心 SiLU (Swish) 激活函数 | 有效带宽 GB/s |
 | [061_rope_embedding](problems/061_rope_embedding.py) · [练习模板](shaders/starters/061_rope_embedding.metal) · [参考实现](shaders/solutions/061_rope_embedding.metal) | 旋转位置编码（RoPE），LLaMA / Mistral / Qwen 关键位置编码 | 有效带宽 GB/s |
 | [113_layer_normalization](problems/113_layer_normalization.py) · [练习模板](shaders/starters/113_layer_normalization.metal) · [参考实现](shaders/solutions/113_layer_normalization.metal) | 经典 Transformer 架构标配 LayerNorm 层（均值、方差、仿射变换） | 有效带宽 GB/s |
 
 ```sh
-python3 scripts/bench.py 002_matrix_mul --shader shaders/solutions/002_matrix_mul.metal
+python3 scripts/bench.py 002_matrix_multiplication --shader shaders/solutions/002_matrix_multiplication.metal
 ```
 
 ## 基准测试设置
@@ -86,6 +109,8 @@ python3 scripts/bench.py 002_matrix_mul --shader shaders/solutions/002_matrix_mu
 2. 实现 `reference_impl(*inputs)`，用只读输入快照计算参考值。单输出返回一个数组，多输出返回数组列表或元组。输出形状和类型必须匹配。浮点结果必须是有限值，并满足 `RTOL` 和 `ATOL` 指定的容差（两者默认均为 `1e-3`）。整数和布尔结果逐元素精确比较。
 3. 实现 `dispatch_config(case)`，返回 `(gx, gy, gz, tx, ty, tz)`。前三项是各维度的线程组数，后三项是各维度的组内线程数。如果网格尺寸按线程数计算，在末尾追加第七项 `False`。
 4. 从 `[[buffer(0)]]` 开始，依次绑定输入、输出和常量。向量加法的两个输入占用槽位 0 和 1，输出占用槽位 2，长度 `np.uint32(N)` 占用槽位 3。需要显示题目特有的吞吐量时，可实现 `metrics(case, median_ms)`。
+
+原地题目（007、019）用 `IN_PLACE = True` 将唯一的输入同时绑定为输出。每次预热或计时前，运行器从快照恢复该缓冲区，恢复操作位于 GPU 计时区间之外。当 CPU 参考值依赖标量参数时，设置 `REFERENCE_USES_SCALARS = True`，运行器会将常量按绑定顺序追加到参考函数的输入参数之后。
 
 ## 运行测试
 

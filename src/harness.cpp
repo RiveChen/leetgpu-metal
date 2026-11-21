@@ -25,7 +25,7 @@ void set_error(RunResult& res, int code, const char* msg) {
 
 } // namespace
 
-extern "C" RunResult run_metal_kernel(
+extern "C" RunResult run_metal_kernel_inplace(
     const char* msl_source,
     const char* entry_name,
     const BufferDesc* buffers,
@@ -36,11 +36,18 @@ extern "C" RunResult run_metal_kernel(
     int warmup_runs,
     int timed_runs,
     bool flush_l2,
-    bool fast_math
+    bool fast_math,
+    const void* initial_data,
+    size_t initial_length
 ) {
   RunResult res{};
   if (warmup_runs < 0 || timed_runs < 1) {
     set_error(res, -2, "warmup_runs must be >= 0 and timed_runs must be >= 1");
+    return res;
+  }
+  if (initial_length && (!initial_data || !num_buffers || !buffers || !buffers[0].ptr ||
+                         initial_length > buffers[0].byte_length)) {
+    set_error(res, -2, "Invalid initial payload for in-place dispatch");
     return res;
   }
   NS::AutoreleasePool* pool = NS::AutoreleasePool::alloc()->init();
@@ -142,6 +149,9 @@ extern "C" RunResult run_metal_kernel(
   }
 
   auto dispatch_once = [&](bool record_time, double& out_ms) -> bool {
+    if (initial_length) {
+      std::memcpy(buffers[0].ptr, initial_data, initial_length);
+    }
     if (flush_l2 && flush_pso && flush_buf) {
       MTL::CommandBuffer* fcmd = queue->commandBuffer();
       MTL::ComputeCommandEncoder* fenc = fcmd->computeCommandEncoder();
@@ -236,4 +246,23 @@ cleanup:
   device->release();
   pool->release();
   return res;
+}
+
+extern "C" RunResult run_metal_kernel(
+    const char* msl_source,
+    const char* entry_name,
+    const BufferDesc* buffers,
+    size_t num_buffers,
+    const BytesDesc* bytes_args,
+    size_t num_bytes_args,
+    DispatchConfig dispatch,
+    int warmup_runs,
+    int timed_runs,
+    bool flush_l2,
+    bool fast_math
+) {
+  return run_metal_kernel_inplace(
+      msl_source, entry_name, buffers, num_buffers, bytes_args, num_bytes_args, dispatch,
+      warmup_runs, timed_runs, flush_l2, fast_math, nullptr, 0
+  );
 }

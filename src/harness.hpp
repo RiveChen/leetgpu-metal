@@ -45,4 +45,21 @@ RunResult run_metal_kernel(
     bool fast_math
 );
 
+// Restore the payload of buffer 0 before each dispatch, outside GPU timing.
+RunResult run_metal_kernel_inplace(
+    const char* msl_source,
+    const char* entry_name,
+    const BufferDesc* buffers,
+    size_t num_buffers,
+    const BytesDesc* bytes_args,
+    size_t num_bytes_args,
+    DispatchConfig dispatch,
+    int warmup_runs,
+    int timed_runs,
+    bool flush_l2,
+    bool fast_math,
+    const void* initial_data,
+    size_t initial_length
+);
+
 } // extern "C"

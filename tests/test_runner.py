@@ -32,6 +32,25 @@ class RunnerTests(unittest.TestCase):
                     problems - shaders, f"Missing {folder}: {sorted(problems - shaders)}"
                 )
 
+    def test_inplace_reverse_restores_input_between_dispatches(self):
+        name = "019_reverse_array"
+        problem = bench.load_problem_module(ROOT / "problems" / f"{name}.py")
+        shader = (ROOT / "shaders/solutions" / f"{name}.metal").read_bytes()
+        # Without restoration, two reversals would leave the buffer in its original order.
+        ok, message, _ = bench.run_single_case(
+            bench.load_harness_lib(LIBRARY),
+            problem,
+            shader,
+            b"solve",
+            {"N": 17},
+            np.random.default_rng(42),
+            1,
+            1,
+            False,
+            True,
+        )
+        self.assertTrue(ok, message)
+
     def test_page_padding_at_allocation_boundaries(self):
         page = bench.PAGE_SIZE
         for size in (0, page - 1, page, page + 1, 2 * page):
