@@ -237,8 +237,10 @@ def run_single_case(
             "In-place execution requires an updated library. Run cmake --build build.",
             None,
         )
-    if in_place and (len(inputs) != 1 or not single_output):
-        raise ValueError("IN_PLACE requires one input and one output of the same shape and dtype")
+    if in_place and (not inputs or not single_output):
+        raise ValueError(
+            "IN_PLACE requires at least one input and a single output matching input[0]"
+        )
     keep_alive_mmaps = []
     buffer_descs = []
     all_buffer_guards = []  # 记录 (label, mm, payload_nbytes) 用于执行后统一审计
@@ -258,8 +260,8 @@ def run_single_case(
         snapshot = input_bytes.copy()
         snapshot.flags.writeable = False
         readonly_inputs.append(snapshot.view(arr.dtype).reshape(arr.shape))
-        if not in_place:
-            input_snapshots.append((input_bytes, snapshot))
+        if not in_place or i != 0:
+            input_snapshots.append((i, input_bytes, snapshot))
         else:
             inplace_array = arr
 
@@ -320,6 +322,15 @@ def run_single_case(
             raise TypeError(f"Unsupported scalar type: {type(sc)}")
         slot_idx += 1
 
+    if hasattr(mod, "workspace_bytes"):
+        size = mod.workspace_bytes(case)
+        if size < 0:
+            raise ValueError("workspace_bytes must be nonnegative")
+        scratch, mm, payload_nbytes = alloc_page_aligned((size,), np.uint8)
+        keep_alive_mmaps.append(mm)
+        buffer_descs.append(BufferDesc(scratch.ctypes.data, len(mm), slot_idx))
+        all_buffer_guards.append(("workspace", mm, payload_nbytes))
+
     cfg = mod.dispatch_config(case)
     if len(cfg) == 6:
         gx, gy, gz, tx, ty, tz = cfg
@@ -360,7 +371,7 @@ def run_single_case(
             return False, f"Buffer padding overwritten by the GPU kernel: {label} {pad_msg}", None
 
     # 4. additional defense: check if input Buffers were mutated by the GPU kernel
-    for i, (input_bytes, snapshot) in enumerate(input_snapshots):
+    for i, input_bytes, snapshot in input_snapshots:
         if not np.array_equal(input_bytes, snapshot):
             return False, f"FAIL: input[{i}] was mutated by the GPU kernel", None
 

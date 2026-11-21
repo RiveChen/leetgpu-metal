@@ -51,6 +51,49 @@ class RunnerTests(unittest.TestCase):
         )
         self.assertTrue(ok, message)
 
+    def test_inplace_readonly_inputs_and_workspace_guards(self):
+        shader = b"""
+        #include <metal_stdlib>
+        using namespace metal;
+        kernel void solve(device uint *acc [[buffer(0)]], device uint *value [[buffer(1)]],
+                          constant uint &mode [[buffer(2)]], device uint *scratch [[buffer(3)]]) {
+            scratch[0] = value[0];
+            acc[0] += scratch[0];
+            if (mode == 1) value[0] = 0;
+            if (mode == 2) scratch[1] = 0;
+        }
+        """
+        problem = SimpleNamespace(
+            IN_PLACE=True,
+            DTYPE=np.uint32,
+            make_inputs=lambda mode, rng: (
+                [np.array([2], np.uint32), np.array([3], np.uint32)],
+                (1,),
+                [np.uint32(mode)],
+            ),
+            reference_impl=lambda acc, value: acc + value,
+            dispatch_config=lambda case: (1, 1, 1, 1, 1, 1),
+            workspace_bytes=lambda case: 4,
+        )
+        lib = bench.load_harness_lib(LIBRARY)
+        for mode, error in enumerate((None, "input[1] was mutated", "workspace")):
+            with self.subTest(mode=mode):
+                ok, message, _ = bench.run_single_case(
+                    lib,
+                    problem,
+                    shader,
+                    b"solve",
+                    mode,
+                    np.random.default_rng(42),
+                    1,
+                    2,
+                    False,
+                    True,
+                )
+                self.assertEqual(ok, error is None, message)
+                if error:
+                    self.assertIn(error, message)
+
     def test_page_padding_at_allocation_boundaries(self):
         page = bench.PAGE_SIZE
         for size in (0, page - 1, page, page + 1, 2 * page):
