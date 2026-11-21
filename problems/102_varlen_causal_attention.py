@@ -1,7 +1,8 @@
 """102. Variable-Length Causal Attention."""
 
-import numpy as np
+from itertools import pairwise
 
+import numpy as np
 
 RTOL, ATOL = 0.0001, 0.0001
 REFERENCE_USES_SCALARS = True
@@ -29,7 +30,7 @@ def make_inputs(case, rng):
 
 def reference_impl(q, k, v, offsets, tokens, width, sequences):
     result = np.empty_like(q)
-    for start, end in zip(offsets[:-1], offsets[1:]):
+    for start, end in pairwise(offsets):
         scores = q[start:end] @ k[start:end].T / np.float32(np.sqrt(width))
         scores[np.triu_indices(end - start, 1)] = -np.inf
         weights = np.exp(scores - scores.max(1, keepdims=True))

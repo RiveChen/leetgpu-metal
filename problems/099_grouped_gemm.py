@@ -1,7 +1,8 @@
 """99. Grouped GEMM."""
 
-import numpy as np
+from itertools import pairwise
 
+import numpy as np
 
 RTOL, ATOL = 0.0001, 0.0001
 REFERENCE_USES_SCALARS = True
@@ -31,7 +32,7 @@ def make_inputs(case, rng):
 
 def reference_impl(a, b, offsets, groups, rows, inner, cols):
     result = np.empty((rows, cols), np.float32)
-    for group, (start, end) in enumerate(zip(offsets[:-1], offsets[1:])):
+    for group, (start, end) in enumerate(pairwise(offsets)):
         result[start:end] = a[start:end] @ b[group]
     return result
 

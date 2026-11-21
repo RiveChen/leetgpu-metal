@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 RTOL, ATOL = 0.01, 0.01
 REFERENCE_USES_SCALARS = True
 

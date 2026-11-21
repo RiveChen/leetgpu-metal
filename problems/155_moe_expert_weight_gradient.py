@@ -1,5 +1,7 @@
 """155. MoE Expert Weight Gradient."""
 
+from itertools import pairwise
+
 import numpy as np
 
 RTOL, ATOL = 0.0001, 0.0001
@@ -29,9 +31,7 @@ def make_inputs(case, rng):
 
 
 def reference_impl(x, dy, offsets):
-    return np.stack(
-        [x[start:end].T @ dy[start:end] for start, end in zip(offsets[:-1], offsets[1:])]
-    )
+    return np.stack([x[start:end].T @ dy[start:end] for start, end in pairwise(offsets)])
 
 
 def dispatch_config(case):
