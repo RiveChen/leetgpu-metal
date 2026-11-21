@@ -116,6 +116,23 @@ class RunnerTests(unittest.TestCase):
                 ok, message = bench.verify_output(out, ref, 0, 0)
                 self.assertEqual(ok, expected, message)
 
+    def test_expected_infinities(self):
+        ref = np.array([np.inf, -np.inf, 2.0])
+        self.assertFalse(bench.verify_output(ref, ref, 0, 0)[0])
+        for index, value, expected in (
+            (2, 2.0, True),
+            (0, -np.inf, False),
+            (1, 0.0, False),
+            (2, np.inf, False),
+            (0, np.nan, False),
+            (2, 1.0, False),
+        ):
+            with self.subTest(index=index, value=value):
+                out = ref.copy()
+                out[index] = value
+                ok, message = bench.verify_output(out, ref, 0, 0, allow_expected_inf=True)
+                self.assertEqual(ok, expected, message)
+
     def test_nan_input_snapshot(self):
         lib = bench.load_harness_lib(LIBRARY)
         # Both bit patterns encode NaN. Only the second case changes the input bytes.

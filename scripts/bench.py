@@ -155,13 +155,22 @@ def output_spec_error(out: np.ndarray, ref: np.ndarray) -> str | None:
     return None
 
 
-def verify_output(out: np.ndarray, ref: np.ndarray, rtol: float, atol: float):
+def verify_output(
+    out: np.ndarray, ref: np.ndarray, rtol: float, atol: float, *, allow_expected_inf: bool = False
+):
     if error := output_spec_error(out, ref):
         return False, error
 
     if np.issubdtype(out.dtype, np.floating):
         if out.size == 0:
             return True, "empty output"
+        if allow_expected_inf and np.isinf(ref).any():
+            expected_inf = np.isinf(ref)
+            if not np.array_equal(out[expected_inf], ref[expected_inf]):
+                return False, "Expected infinity missing or has the wrong sign"
+            # Matched infinities contribute zero error and preserve the diagnostic indices.
+            ref = np.where(expected_inf, 0, ref)
+            out = np.where(expected_inf, 0, out)
         if np.isnan(out).any() or np.isinf(out).any():
             nan_cnt = int(np.isnan(out).sum())
             inf_cnt = int(np.isinf(out).sum())
@@ -380,7 +389,13 @@ def run_single_case(
 
     diag_msgs = []
     for i, (out_arr, ref_arr) in enumerate(zip(aligned_outputs, refs, strict=True)):
-        ok, msg = verify_output(out_arr, np.asarray(ref_arr), rtol=rtol, atol=atol)
+        ok, msg = verify_output(
+            out_arr,
+            np.asarray(ref_arr),
+            rtol=rtol,
+            atol=atol,
+            allow_expected_inf=getattr(mod, "ALLOW_EXPECTED_INF", False),
+        )
         if not ok:
             tag = f"out[{i}] " if not single_output else ""
             return False, f"FAIL ({tag}{msg})", None
