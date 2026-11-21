@@ -31,7 +31,7 @@ def make_inputs(case, rng):
 
 
 def reference_impl(value, shapes, locations, weights):
-    queries, heads, levels, points = weights.shape
+    queries, heads, _, points = weights.shape
     out = np.zeros((queries, heads, value.shape[-1]), dtype=np.float32)
     offset = 0
     for level, (height, width) in enumerate(shapes):
