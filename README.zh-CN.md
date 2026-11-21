@@ -31,6 +31,15 @@ python3 scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_ad
 python3 scripts/bench.py 001_vector_add
 ```
 
+### 使用 uv
+
+使用 Homebrew 的读者可运行 `brew install uv`。使用 uv 时，跳过上面的 venv 和 pip 步骤，照常用 CMake 构建动态库。uv 会读取 `scripts/bench.py` 声明的 Python 版本和 NumPy 依赖。先验证参考实现，再运行自己完成的模板。
+
+```sh
+uv run scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
+uv run scripts/bench.py 001_vector_add
+```
+
 ## 内置题目
 
 | 题目 | 计算内容 | 性能指标 |
@@ -84,6 +93,12 @@ python3 scripts/bench.py 002_matrix_mul --shader shaders/solutions/002_matrix_mu
 
 ```sh
 python3 -m unittest discover -s tests -v
+```
+
+通过 uv 运行同一套测试：
+
+```sh
+uv run --python ">=3.12" --with "numpy>=2.5.5" python -m unittest discover -s tests -v
 ```
 
 ## 致谢

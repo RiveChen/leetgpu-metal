@@ -41,6 +41,15 @@ The command above checks the installation using the reference solution. To pract
 python3 scripts/bench.py 001_vector_add
 ```
 
+### Run with uv
+
+If you use Homebrew, install uv with `brew install uv`. Skip the venv and pip steps above and build the native library with CMake as shown. uv reads the Python version and NumPy requirement from `scripts/bench.py`. Run the reference solution first, then try your completed starter.
+
+```sh
+uv run scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
+uv run scripts/bench.py 001_vector_add
+```
+
 ---
 
 ## Built-in Problems
@@ -119,6 +128,12 @@ Run the test suite on any Apple Silicon Mac with Metal access:
 
 ```sh
 python3 -m unittest discover -s tests -v
+```
+
+To run the same tests with uv:
+
+```sh
+uv run --python ">=3.12" --with "numpy>=2.5.5" python -m unittest discover -s tests -v
 ```
 
 The tests verify buffer canary detection, mutation defense, invalid CLI arguments, and error reporting.
