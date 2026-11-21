@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 021: ReLU (Rectified Linear Unit)
 //
-// Starter Framework:
+// Task:
 // Compute y_i = max(0.0, x_i) for each element in the array of length N.
 //
 // Optimization Tips:

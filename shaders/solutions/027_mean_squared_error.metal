@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 027: Mean Squared Error (MSE Loss)
 //
-// Starter Framework:
+// Task:
 // Compute MSE = (1 / N) * sum_{i=0}^{N-1} (predictions[i] - targets[i])^2.
 //
 // Optimization Tips:

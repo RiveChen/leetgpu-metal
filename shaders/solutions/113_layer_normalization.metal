@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 113: Layer Normalization (LayerNorm)
 //
-// Starter Framework:
+// Task:
 // Standard LayerNorm across feature dimension C for N rows:
 // 1. mean = mean(x)
 // 2. var = var(x)

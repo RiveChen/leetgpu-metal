@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 003: Matrix Transpose
 //
-// Starter Framework:
+// Task:
 // Input matrix is of shape (rows, cols), stored row-major.
 // Output matrix must be of shape (cols, rows), stored row-major.
 //

@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 017: Dot Product
 //
-// Starter Framework:
+// Task:
 // Compute scalar output[0] = sum_{i=0}^{N-1} A[i] * B[i].
 //
 // Optimization Tips:

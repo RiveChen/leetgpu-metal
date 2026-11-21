@@ -2,7 +2,7 @@
 
 [English](README.md) · 简体中文
 
-在 Apple Silicon Mac 上编写 Metal 计算内核，用 NumPy 验证结果，并测量 GPU 执行时间。每道题由一份 Python 题目定义和一个 `.metal` 文件组成。C++ 运行器会在运行时编译着色器，改完内核即可用同一条命令重新测试。
+在 Apple Silicon Mac 上编写 Metal 计算内核，用 NumPy 验证结果，并测量 GPU 执行时间。每道题都包含 Python 题目定义、Metal 练习模板和 AI 生成的参考实现。C++ 运行器会在运行时编译着色器，改完内核即可用同一条命令重新测试。
 
 ## 快速开始
 
@@ -20,42 +20,41 @@ python3 -m pip install 'numpy>=2.5.5'
 
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-python3 scripts/bench.py 001_vector_add
+python3 scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
 ```
 
 如果已经克隆仓库，但 `third_party/metal-cpp` 目录为空，请先运行 `git submodule update --init --recursive`，再执行构建。
 
-向量加法会运行三个用例。每个通过的用例都会输出数值误差、GPU 耗时的中位数和最小值（毫秒），以及有效带宽（GB/s）。全部通过时，最后一行是 `ALL CASES PASSED.`。要用相同的用例测试自己的实现，可以复制着色器，修改副本，再通过 `--shader` 指定它。
+向量加法会运行三个用例。每个通过的用例都会输出数值误差、GPU 耗时的中位数和最小值（毫秒），以及有效带宽（GB/s）。全部通过时，最后一行是 `ALL CASES PASSED.`。上面的命令用参考实现验证安装。开始练习时，在 `shaders/starters/001_vector_add.metal` 的 TODO 处完成实现，再执行下面的默认命令。空模板可以编译，运行时会因输出未写入而校验失败。
 
 ```sh
-cp shaders/001_vector_add.metal my_vector_add.metal
-python3 scripts/bench.py 001_vector_add --shader my_vector_add.metal
+python3 scripts/bench.py 001_vector_add
 ```
 
 ## 内置题目
 
 | 题目 | 计算内容 | 性能指标 |
 | --- | --- | --- |
-| [001_vector_add](problems/001_vector_add.py) · [Metal 内核](shaders/001_vector_add.metal) | FP32 向量逐元素相加，长度分别为 31、100,003 和 16,777,216 | 有效带宽 GB/s，每个元素按两次读、一次写计算 |
-| [002_matrix_mul](problems/002_matrix_mul.py) · [Metal 内核](shaders/002_matrix_mul.metal) | FP32 矩阵乘法，覆盖非方阵及最大 4096 × 4096 的方阵 | 吞吐量 GFLOP/s，运算量按 `2 × M × N × K` 计算 |
-| [003_matrix_transpose](problems/003_matrix_transpose.py) · [Metal 内核](shaders/003_matrix_transpose.metal) | 二维矩阵转置，测试访存合并与线程组分块优化 | 有效带宽 GB/s |
-| [004_reduction](problems/004_reduction.py) · [Metal 内核](shaders/004_reduction.metal) | 并行数组规约求和，测试 SIMD-group 原语与多级规约 | 有效带宽 GB/s |
-| [005_softmax](problems/005_softmax.py) · [Metal 内核](shaders/005_softmax.metal) | 数值稳定的 Softmax 算子，包含大偏移量防溢出测试 | 有效带宽 GB/s |
-| [008_matrix_addition](problems/008_matrix_addition.py) · [Metal 内核](shaders/008_matrix_addition.metal) | 二维矩阵逐元素加法，测试二维线程网格分发 | 有效带宽 GB/s |
-| [010_2d_convolution](problems/010_2d_convolution.py) · [Metal 内核](shaders/010_2d_convolution.metal) | 二维有效卷积 / 互相关运算，测试卷积核滑窗与共享内存复用 | 吞吐量 GFLOP/s |
-| [013_histogramming](problems/013_histogramming.py) · [Metal 内核](shaders/013_histogramming.metal) | 直方图统计，测试硬件原子加法 `atomic_fetch_add` 与争用优化 | 有效带宽 GB/s |
-| [016_prefix_sum](problems/016_prefix_sum.py) · [Metal 内核](shaders/016_prefix_sum.metal) | 前缀和扫描（Inclusive Scan），测试 SIMD 组内与多级规约扫描 | 有效带宽 GB/s |
-| [017_dot_product](problems/017_dot_product.py) · [Metal 内核](shaders/017_dot_product.metal) | 向量内积点积，测试 FMA 指令与两级树状累加规约 | 有效带宽 GB/s |
-| [021_relu](problems/021_relu.py) · [Metal 内核](shaders/021_relu.metal) | 逐元素单目 ReLU 激活函数，测试硬件显存带宽极限 | 有效带宽 GB/s |
-| [027_mean_squared_error](problems/027_mean_squared_error.py) · [Metal 内核](shaders/027_mean_squared_error.metal) | 均方误差损失（MSE Loss）计算，测试差值平方规约 | 有效带宽 GB/s |
-| [042_2d_max_pooling](problems/042_2d_max_pooling.py) · [Metal 内核](shaders/042_2d_max_pooling.metal) | 二维 2x2 步长 2 最大池化，CNN 特征图经典降采样 | 有效带宽 GB/s |
-| [050_rms_normalization](problems/050_rms_normalization.py) · [Metal 内核](shaders/050_rms_normalization.metal) | 现代大语言模型（LLM）常用的 RMSNorm 归一化层 | 有效带宽 GB/s |
-| [052_silu](problems/052_silu.py) · [Metal 内核](shaders/052_silu.metal) | 现代 LLM 与扩散模型核心 SiLU (Swish) 激活函数 | 有效带宽 GB/s |
-| [061_rope_embedding](problems/061_rope_embedding.py) · [Metal 内核](shaders/061_rope_embedding.metal) | 旋转位置编码（RoPE），LLaMA / Mistral / Qwen 关键位置编码 | 有效带宽 GB/s |
-| [113_layer_normalization](problems/113_layer_normalization.py) · [Metal 内核](shaders/113_layer_normalization.metal) | 经典 Transformer 架构标配 LayerNorm 层（均值、方差、仿射变换） | 有效带宽 GB/s |
+| [001_vector_add](problems/001_vector_add.py) · [练习模板](shaders/starters/001_vector_add.metal) · [参考实现](shaders/solutions/001_vector_add.metal) | FP32 向量逐元素相加，长度分别为 31、100,003 和 16,777,216 | 有效带宽 GB/s，每个元素按两次读、一次写计算 |
+| [002_matrix_mul](problems/002_matrix_mul.py) · [练习模板](shaders/starters/002_matrix_mul.metal) · [参考实现](shaders/solutions/002_matrix_mul.metal) | FP32 矩阵乘法，覆盖非方阵及最大 4096 × 4096 的方阵 | 吞吐量 GFLOP/s，运算量按 `2 × M × N × K` 计算 |
+| [003_matrix_transpose](problems/003_matrix_transpose.py) · [练习模板](shaders/starters/003_matrix_transpose.metal) · [参考实现](shaders/solutions/003_matrix_transpose.metal) | 二维矩阵转置，测试访存合并与线程组分块优化 | 有效带宽 GB/s |
+| [004_reduction](problems/004_reduction.py) · [练习模板](shaders/starters/004_reduction.metal) · [参考实现](shaders/solutions/004_reduction.metal) | 并行数组规约求和，测试 SIMD-group 原语与多级规约 | 有效带宽 GB/s |
+| [005_softmax](problems/005_softmax.py) · [练习模板](shaders/starters/005_softmax.metal) · [参考实现](shaders/solutions/005_softmax.metal) | 数值稳定的 Softmax 算子，包含大偏移量防溢出测试 | 有效带宽 GB/s |
+| [008_matrix_addition](problems/008_matrix_addition.py) · [练习模板](shaders/starters/008_matrix_addition.metal) · [参考实现](shaders/solutions/008_matrix_addition.metal) | 二维矩阵逐元素加法，测试二维线程网格分发 | 有效带宽 GB/s |
+| [010_2d_convolution](problems/010_2d_convolution.py) · [练习模板](shaders/starters/010_2d_convolution.metal) · [参考实现](shaders/solutions/010_2d_convolution.metal) | 二维有效卷积 / 互相关运算，测试卷积核滑窗与共享内存复用 | 吞吐量 GFLOP/s |
+| [013_histogramming](problems/013_histogramming.py) · [练习模板](shaders/starters/013_histogramming.metal) · [参考实现](shaders/solutions/013_histogramming.metal) | 直方图统计，测试硬件原子加法 `atomic_fetch_add` 与争用优化 | 有效带宽 GB/s |
+| [016_prefix_sum](problems/016_prefix_sum.py) · [练习模板](shaders/starters/016_prefix_sum.metal) · [参考实现](shaders/solutions/016_prefix_sum.metal) | 前缀和扫描（Inclusive Scan），测试 SIMD 组内与多级规约扫描 | 有效带宽 GB/s |
+| [017_dot_product](problems/017_dot_product.py) · [练习模板](shaders/starters/017_dot_product.metal) · [参考实现](shaders/solutions/017_dot_product.metal) | 向量内积点积，测试 FMA 指令与两级树状累加规约 | 有效带宽 GB/s |
+| [021_relu](problems/021_relu.py) · [练习模板](shaders/starters/021_relu.metal) · [参考实现](shaders/solutions/021_relu.metal) | 逐元素单目 ReLU 激活函数，测试硬件显存带宽极限 | 有效带宽 GB/s |
+| [027_mean_squared_error](problems/027_mean_squared_error.py) · [练习模板](shaders/starters/027_mean_squared_error.metal) · [参考实现](shaders/solutions/027_mean_squared_error.metal) | 均方误差损失（MSE Loss）计算，测试差值平方规约 | 有效带宽 GB/s |
+| [042_2d_max_pooling](problems/042_2d_max_pooling.py) · [练习模板](shaders/starters/042_2d_max_pooling.metal) · [参考实现](shaders/solutions/042_2d_max_pooling.metal) | 二维 2x2 步长 2 最大池化，CNN 特征图经典降采样 | 有效带宽 GB/s |
+| [050_rms_normalization](problems/050_rms_normalization.py) · [练习模板](shaders/starters/050_rms_normalization.metal) · [参考实现](shaders/solutions/050_rms_normalization.metal) | 现代大语言模型（LLM）常用的 RMSNorm 归一化层 | 有效带宽 GB/s |
+| [052_silu](problems/052_silu.py) · [练习模板](shaders/starters/052_silu.metal) · [参考实现](shaders/solutions/052_silu.metal) | 现代 LLM 与扩散模型核心 SiLU (Swish) 激活函数 | 有效带宽 GB/s |
+| [061_rope_embedding](problems/061_rope_embedding.py) · [练习模板](shaders/starters/061_rope_embedding.metal) · [参考实现](shaders/solutions/061_rope_embedding.metal) | 旋转位置编码（RoPE），LLaMA / Mistral / Qwen 关键位置编码 | 有效带宽 GB/s |
+| [113_layer_normalization](problems/113_layer_normalization.py) · [练习模板](shaders/starters/113_layer_normalization.metal) · [参考实现](shaders/solutions/113_layer_normalization.metal) | 经典 Transformer 架构标配 LayerNorm 层（均值、方差、仿射变换） | 有效带宽 GB/s |
 
 ```sh
-python3 scripts/bench.py 002_matrix_mul
+python3 scripts/bench.py 002_matrix_mul --shader shaders/solutions/002_matrix_mul.metal
 ```
 
 ## 基准测试设置
@@ -72,7 +71,7 @@ python3 scripts/bench.py 002_matrix_mul
 
 ## 新增题目
 
-创建一对同名文件 `problems/<name>.py` 和 `shaders/<name>.metal`，然后用 `python3 scripts/bench.py <name>` 运行。可以参考向量加法的两个文件。[题目定义](problems/001_vector_add.py) · [Metal 内核](shaders/001_vector_add.metal)
+创建 `problems/<name>.py`，并在 `shaders/starters/` 和 `shaders/solutions/` 中各放一份同名的 `<name>.metal`，然后用 `python3 scripts/bench.py <name>` 运行。可以参考向量加法示例。[题目定义](problems/001_vector_add.py) · [练习模板](shaders/starters/001_vector_add.metal) · [参考实现](shaders/solutions/001_vector_add.metal)
 
 1. 定义 `TEST_CASES` 并实现 `make_inputs(case, rng)`，依次返回输入数组列表、输出规格和常量列表。单输出填写形状，并用 `DTYPE` 指定类型（默认 `np.float32`）。多输出填写由 `(shape, dtype)` 组成的列表。
 2. 实现 `reference_impl(*inputs)`，用只读输入快照计算参考值。单输出返回一个数组，多输出返回数组列表或元组。输出形状和类型必须匹配。浮点结果必须是有限值，并满足 `RTOL` 和 `ATOL` 指定的容差（两者默认均为 `1e-3`）。整数和布尔结果逐元素精确比较。

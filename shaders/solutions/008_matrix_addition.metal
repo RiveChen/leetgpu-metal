@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 008: Matrix Addition
 //
-// Starter Framework:
+// Task:
 // Compute C = A + B for two N x N square matrices.
 //
 // Optimization Tips:

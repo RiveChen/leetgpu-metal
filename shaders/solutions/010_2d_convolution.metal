@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 010: 2D Convolution (Cross-correlation with Valid Padding)
 //
-// Starter Framework:
+// Task:
 // Input: (H, W), Kernel: (kH, kW), Output: (H - kH + 1, W - kW + 1)
 //
 // Optimization Tips:

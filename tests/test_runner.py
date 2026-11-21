@@ -22,6 +22,16 @@ kernel void solve(device const uchar *src [[buffer(0)]], device uchar *dst [[buf
 
 
 class RunnerTests(unittest.TestCase):
+    def test_bundled_problems_have_starters_and_solutions(self):
+        problems = {p.stem for p in (ROOT / "problems").glob("[0-9]*.py")}
+        self.assertTrue(problems)
+        for folder in ("starters", "solutions"):
+            with self.subTest(folder=folder):
+                shaders = {p.stem for p in (ROOT / "shaders" / folder).glob("[0-9]*.metal")}
+                self.assertFalse(
+                    problems - shaders, f"Missing {folder}: {sorted(problems - shaders)}"
+                )
+
     def test_page_padding_at_allocation_boundaries(self):
         page = bench.PAGE_SIZE
         for size in (0, page - 1, page, page + 1, 2 * page):

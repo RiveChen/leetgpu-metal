@@ -361,7 +361,7 @@ def run_single_case(
 def main():
     parser = argparse.ArgumentParser(description="Local Metal LeetGPU Runner")
     parser.add_argument(
-        "name", help="Problem name (loads problems/<name>.py & shaders/<name>.metal)"
+        "name", help="Problem name (loads problems/<name>.py & shaders/starters/<name>.metal)"
     )
     parser.add_argument("--shader", type=Path, default=None, help="Override path to .metal file")
     parser.add_argument(
@@ -391,7 +391,7 @@ def main():
         parser.error(error)
 
     problem_path = Path("problems") / f"{args.name}.py"
-    shader_path = args.shader if args.shader else Path("shaders") / f"{args.name}.metal"
+    shader_path = args.shader if args.shader else Path("shaders/starters") / f"{args.name}.metal"
 
     if not shader_path.exists():
         print(f"[ERROR] Shader file not found: {shader_path}", file=sys.stderr)

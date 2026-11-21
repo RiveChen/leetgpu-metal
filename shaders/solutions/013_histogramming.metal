@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 013: Histogramming
 //
-// Starter Framework:
+// Task:
 // Compute frequency of each bin (0 to num_bins - 1) from N integer values.
 //
 // Optimization Tips:

@@ -38,7 +38,7 @@ jobs:
 
       - name: Lint C++ & MSL (clang-format)
         run: |
-          clang-format --dry-run --Werror src/*.cpp src/*.hpp shaders/*.metal
+          clang-format --dry-run --Werror src/*.cpp src/*.hpp shaders/starters/*.metal shaders/solutions/*.metal
 
       - name: Configure CMake
         run: |
@@ -56,11 +56,12 @@ jobs:
 
           if [ "$HAS_METAL" = "True" ]; then
             python3 -m unittest discover -s tests -p "test_*.py" -v
-            python3 scripts/bench.py 001_vector_add
+            python3 scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
             # Run matrix multiplication with smaller warmup/runs for CI efficiency
-            python3 scripts/bench.py 002_matrix_mul --warmup 1 --runs 3
+            python3 scripts/bench.py 002_matrix_mul --shader shaders/solutions/002_matrix_mul.metal --warmup 1 --runs 3
           else
             echo "::warning ::Metal GPU is not available in this virtualized environment. Running non-GPU unit tests only."
+            python3 -m unittest tests.test_runner.RunnerTests.test_bundled_problems_have_starters_and_solutions
             python3 -m unittest tests.test_runner.RunnerTests.test_page_padding_at_allocation_boundaries
             python3 -m unittest tests.test_runner.RunnerTests.test_empty_float_output_requires_matching_shape_and_dtype
             python3 -m unittest tests.test_runner.RunnerTests.test_cli_invalid_counts

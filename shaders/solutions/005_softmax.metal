@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 005: Softmax
 //
-// Starter Framework:
+// Task:
 // Compute numerically stable softmax on 1D vector of length N:
 // 1. max_val = max(x_i)
 // 2. sum_exp = sum(exp(x_i - max_val))

@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 004: Reduction (Sum)
 //
-// Starter Framework:
+// Task:
 // Input array has N elements. Compute the scalar sum and store it in output[0].
 //
 // Optimization Tips:

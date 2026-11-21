@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 050: RMS Normalization (Root Mean Square Normalization)
 //
-// Starter Framework:
+// Task:
 // Used extensively in modern LLM architectures (e.g. LLaMA, Mistral, Qwen):
 // 1. rms = sqrt(mean(x_i^2) + eps)
 // 2. output_i = gamma * (x_i / rms) + beta

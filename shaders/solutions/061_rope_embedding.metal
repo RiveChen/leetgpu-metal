@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 061: Rotary Position Embedding (RoPE)
 //
-// Starter Framework:
+// Task:
 // Used in LLaMA, Mistral, Qwen, and DeepSeek architectures:
 // x1 = Q[..., : D / 2], x2 = Q[..., D / 2 :]
 // rotated_Q = [-x2, x1]

@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 042: 2D Max Pooling (2x2 kernel, stride 2)
 //
-// Starter Framework:
+// Task:
 // Input: (H, W), Output: (H / 2, W / 2). Each thread samples a 2x2 patch.
 //
 // Optimization Tips:

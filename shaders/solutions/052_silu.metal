@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 052: SiLU (Sigmoid Linear Unit / Swish)
 //
-// Starter Framework:
+// Task:
 // Compute y_i = x_i * sigmoid(x_i) = x_i / (1.0 + exp(-x_i)).
 // Widely used in modern LLMs (LLaMA, Mistral, Qwen) and Diffusion Models.
 //

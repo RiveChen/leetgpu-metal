@@ -10,17 +10,5 @@ kernel void solve(
     constant uint& K [[buffer(5)]],
     uint2 gid [[thread_position_in_grid]]
 ) {
-  uint row = gid.y;
-  uint col = gid.x;
-
-  if (row >= M || col >= N) {
-    return;
-  }
-
-  float acc = 0.0f;
-  for (uint k = 0; k < K; ++k) {
-    acc = fma(A[row * K + k], B[k * N + col], acc);
-  }
-
-  C[row * N + col] = acc;
+  // TODO: Multiply row-major A (M x K) and B (K x N) into C (M x N).
 }

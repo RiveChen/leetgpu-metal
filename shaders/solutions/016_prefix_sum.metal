@@ -1,9 +1,10 @@
+// AI-generated reference solution.
 #include <metal_stdlib>
 using namespace metal;
 
 // Problem 016: Prefix Sum (Inclusive Scan)
 //
-// Starter Framework:
+// Task:
 // Compute output[i] = sum_{j=0}^i input[j] for i in [0, N-1].
 //
 // Optimization Tips:
