@@ -4,9 +4,23 @@
 
 在 Apple Silicon Mac 上编写 Metal 计算内核，用 NumPy 验证结果，并测量 GPU 执行时间。每道题都包含 Python 题目定义、Metal 练习模板和 AI 生成的参考实现。C++ 运行器会在运行时编译着色器，改完内核即可用同一条命令重新测试。
 
+## TL;DR
+
+在装有 Xcode Command Line Tools、CMake 和 uv 的 Apple Silicon Mac 上执行以下步骤。
+
+```sh
+git clone --recurse-submodules https://github.com/RiveChen/leetgpu-metal.git
+cd leetgpu-metal
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# 打开 shaders/starters/001_vector_add.metal，在 solve 的 TODO 处写入你的实现。
+uv run scripts/bench.py 001_vector_add
+```
+
 ## 快速开始
 
-准备一台支持 Metal 的 Apple Silicon Mac，安装带有 C++17 编译器的 Xcode Command Line Tools、CMake 3.20 或更高版本、Ninja，以及 Python 3.12 或更高版本。运行器用到的 Metal 数学模式接口从 macOS 15 开始提供。示例和测试已在 macOS 27.2.1、Python 3.15.2、NumPy 2.5.5 环境下运行通过。
+准备一台支持 Metal 的 Apple Silicon Mac，安装带有 C++17 编译器的 Xcode Command Line Tools、CMake 3.20 或更高版本，以及 Python 3.12 或更高版本。运行器用到的 Metal 数学模式接口从 macOS 15 开始提供。示例和测试已在 macOS 27.2.1、Python 3.15.2、NumPy 2.5.5 环境下运行通过。
 
 克隆时一并获取子模块，其中包含 Apple 的 metal-cpp 头文件。后续命令都在仓库根目录执行。
 
@@ -18,7 +32,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install 'numpy>=2.5.5'
 
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 python3 scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
 ```
@@ -125,6 +139,10 @@ python3 -m unittest discover -s tests -v
 ```sh
 uv run --python ">=3.12" --with "numpy>=2.5.5" python -m unittest discover -s tests -v
 ```
+
+## AI 使用说明
+
+`shaders/solutions/` 中的 Metal 参考实现由 AI 生成，供练习时对照。它们可能存在错误，也可能有进一步优化的空间。运行器用 NumPy 校验仓库自带的用例。复用内核前，请补测自己的输入，并在目标 GPU 上实测性能。
 
 ## 致谢
 

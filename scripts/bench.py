@@ -57,7 +57,7 @@ class RunResult(ctypes.Structure):
 def load_harness_lib(lib_path: Path):
     if not lib_path.exists():
         raise FileNotFoundError(
-            f"Dynamic library not found at {lib_path}. Run `cmake -B build -G Ninja && ninja -C build` first."
+            f"Dynamic library not found at {lib_path}. Run `cmake -S . -B build && cmake --build build` first."
         )
     lib = ctypes.CDLL(str(lib_path))
     lib.run_metal_kernel.argtypes = [

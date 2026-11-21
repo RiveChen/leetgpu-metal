@@ -4,6 +4,20 @@ English · [简体中文](README.zh-CN.md)
 
 Write Metal compute kernels on Apple Silicon Macs, verify numerical correctness with NumPy, and benchmark raw GPU execution time. Each problem includes a Python specification, a starter kernel, and an AI-generated reference solution. The C++ runtime compiles shaders just-in-time, allowing you to iterate and re-benchmark immediately with a single command.
 
+## TL;DR
+
+Start on an Apple Silicon Mac with Xcode Command Line Tools, CMake, and uv installed.
+
+```sh
+git clone --recurse-submodules https://github.com/RiveChen/leetgpu-metal.git
+cd leetgpu-metal
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+
+# Open shaders/starters/001_vector_add.metal and implement the TODO in solve.
+uv run scripts/bench.py 001_vector_add
+```
+
 ---
 
 ## Quick Start
@@ -12,7 +26,7 @@ Write Metal compute kernels on Apple Silicon Macs, verify numerical correctness 
 
 - An Apple Silicon Mac (M-series) running macOS 13.0 or later (Metal MathMode requires macOS 15+).
 - Xcode Command Line Tools (`xcode-select --install`) with C++17 support.
-- CMake 3.20+ and Ninja (`brew install cmake ninja`).
+- CMake 3.20+ (`brew install cmake`). Ninja is optional.
 - Python 3.12+ with NumPy (`pip install 'numpy>=2.5.5'`).
 
 ### Build & Run
@@ -27,7 +41,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install 'numpy>=2.5.5'
 
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
 python3 scripts/bench.py 001_vector_add --shader shaders/solutions/001_vector_add.metal
@@ -177,6 +191,10 @@ clang-format --dry-run --Werror src/*.cpp src/*.hpp shaders/starters/*.metal sha
 ```
 
 ---
+
+## AI disclaimer
+
+The Metal kernels in `shaders/solutions/` were generated with AI as examples for comparison. They can contain bugs or miss optimizations. The runner checks the bundled cases against NumPy. Test additional inputs and measure performance on your own GPU before reusing a kernel.
 
 ## Acknowledgments
 
